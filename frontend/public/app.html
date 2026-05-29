@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wake and Learn - Học thông minh với AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div id="loadingOverlay" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%; background:rgba(255,255,255,0.8);z-index:9999;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(5px);">
+        <div style="width:50px;height:50px;border:5px solid #f3f3f3;border-top:5px solid #3b82f6;border-radius:50%;animation:spin 1s linear infinite;"></div>
+        <p style="margin-top:20px;font-weight:bold;color:#1e293b;">&#x1F916; AI đang xử lý, vui lòng chờ giây lát...</p>
+    </div>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo"><span class="logo-icon">&#x1F393;</span><span class="logo-text">Wake &amp; Learn</span></div>
+            <nav class="nav">
+                <div class="nav-link active" data-tab="home"><span class="icon">&#x1F3E0;</span><span>Trang chủ</span></div>
+                <div class="nav-link" data-tab="study"><span class="icon">&#x1F4D6;</span><span>Học thẻ</span></div>
+                <div class="nav-link" data-tab="manage"><span class="icon">&#x1F5C2;</span><span>Quản lý thẻ</span></div>
+                <div class="nav-link" data-tab="create"><span class="icon">➕</span><span>Tạo thẻ</span></div>
+                <div class="nav-link" data-tab="ai"><span class="icon">&#x1F916;</span><span>AI sinh thẻ</span></div>
+                <div class="nav-link" data-tab="batch"><span class="icon">&#x1F4DA;</span><span>Tạo nhiều thẻ</span></div>
+                <div class="nav-link" data-tab="chat"><span class="icon">&#x1F4AC;</span><span>Trợ lý AI</span></div>
+                <div class="nav-link" data-tab="exercises"><span class="icon">&#x270D;</span><span>Bài tập điền từ</span></div>
+                <div class="nav-link" data-tab="game"><span class="icon">🎮</span><span>Cờ chơi từ vựng</span></div>
+                <div class="nav-link" data-tab="scenarios"><span class="icon">&#x1F3AD;</span><span>Role-play IT</span></div>
+                <div class="nav-link" data-tab="settings"><span class="icon">&#x2699;</span><span>Cấu hình</span></div>
+            </nav>
+            <div class="user-card" style="flex-direction:column;align-items:stretch;padding:1.5rem;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="avatar">👤</div><div class="user-info"><div class="name" id="username">Đang tải...</div><div class="stats" id="userStats" style="cursor:pointer" onclick="logout()">Thoát</div></div>
+                </div>
+                <div style="margin-top:15px;background:#f1f5f9;padding:12px;border-radius:12px;border:1px solid #e2e8f0;">
+                    <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px;">🎯 Mục tiêu học tập</div>
+                    <div id="activeGoalDisplay" style="font-size:13px;font-weight:600;color:#1e293b;">Đang tải...</div>
+                    <div id="aiStatusDisplay" style="font-size:11px;color:#475569;margin-top:5px;font-style:italic;">--</div>
+                </div>
+            </div>
+        </aside>
+        <main class="main">
+            <!-- ===== HOME ===== -->
+            <div class="tab active" id="home">
+                <div class="hero"><h2>Wake &amp; Learn 🌟</h2></div>
+                <div id="learningFlowContainer" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #bae6fd;">
+                    <h3 style="margin:0 0 15px 0; color:#0369a1; font-size:1.1rem;">🎯 Lộ trình học hôm nay</h3>
+                    <div id="learningFlowSteps" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;"></div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-bottom:4px solid #3b82f6;"><div class="stat-number" id="totalCards">0</div><div class="stat-label">Tổng số thẻ</div></div>
+                    <div class="stat-card" style="border-bottom:4px solid #10b981;"><div class="stat-number" id="countEN">0</div><div class="stat-label">🇬🇧 Tiếng Anh</div></div>
+                    <div class="stat-card" style="border-bottom:4px solid #ef4444;"><div class="stat-number" id="countZH">0</div><div class="stat-label">🇨🇳 Tiếng Trung</div></div>
+                    <div class="stat-card" style="border-bottom:4px solid #f59e0b;"><div class="stat-number" id="countTRI">0</div><div class="stat-label">🌍 3 Ngôn ngữ</div></div>
+                </div>
+            </div>
+
+            <!-- ===== STUDY ===== -->
+            <div class="tab" id="study">
+                <div class="tab-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <h2>📖 Học với flashcard</h2>
+                    <button class="btn btn-danger" style="padding:8px 15px;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;border-radius:10px;font-weight:600;" onclick="deleteCurrentCard()">🗑️ Xoá thẻ này</button>
+                </div>
+                <div id="studyDateBar" style="display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+                    <button class="btn" onclick="changeStudyDate(-1)" style="padding:6px 14px;font-size:0.88rem;background:#dbeafe;color:#1e40af;font-weight:600;">◀ Hôm qua</button>
+                    <span id="studyDateLabel" style="font-weight:800;color:#1e40af;font-size:1.05rem;min-width:130px;text-align:center;"></span>
+                    <button class="btn" onclick="changeStudyDate(1)" style="padding:6px 14px;font-size:0.88rem;background:#dbeafe;color:#1e40af;font-weight:600;">Ngày mai ▶</button>
+                    <button class="btn" onclick="resetStudyDate()" style="padding:6px 14px;font-size:0.88rem;background:#f0fdf4;color:#166534;font-weight:600;">📅 Hôm nay</button>
+                </div>
+                <div id="studyContent"><p style="text-align:center;color:#64748b;">Đang tải thẻ học...</p></div>
+            </div>
+
+            <!-- ===== CREATE ===== -->
+            <div class="tab" id="create">
+                <h2>➕ Tạo thẻ mới (WebUI thông minh)</h2>
+                <div class="form-container">
+                    <div class="form-group"><label>Từ vựng tiếng Anh (bắt buộc)</label><input type="text" id="newQuestion" placeholder="e.g. algorithm"></div>
+                    <div class="form-group"><label>Từ vựng tiếng Trung ZH (tùy chọn)</label><input type="text" id="newWordZH" placeholder="e.g. 算法" autocomplete="off"></div>
+                    <div class="form-group"><label>Pinyin (tùy chọn)</label><input type="text" id="newPinyin" placeholder="e.g. suàn fǎ" autocomplete="off"></div>
+                    <div class="form-group"><label>Nghĩa tiếng Việt (bắt buộc)</label><input type="text" id="newAnswer" placeholder="Nghĩa tiếng Việt..."></div>
+                    <div class="form-group"><label>Ví dụ EN (tùy chọn)</label><input type="text" id="newExEN" placeholder="The algorithm processes data fast." autocomplete="off"></div>
+                    <div class="form-group"><label>Ví dụ ZH (tùy chọn)</label><input type="text" id="newExZH" placeholder="软件中有一个错误导致它意外崩溃" autocomplete="off"></div>
+                    <div class="form-group"><label>Ví dụ VI (tùy chọn)</label><input type="text" id="newExVI" placeholder="Phần mềm có một lỗi, dẫn đến việc nó sập bẫy bất ngờ." autocomplete="off"></div>
+                    <div style="display:flex; gap:8px; margin:8px 0; flex-wrap:wrap;">
+                        <button class="btn btn-primary" onclick="createManualCard()">💾 Lưu thẻ đầy đủ</button>
+                        <button class="btn" onclick="aiFillForManual()" style="background:#f0f9ff;color:#0369a1;border:1px solid #bae6fd;">✨ AI điền đầy đủ (IPA+ZH+Pinyin+VD 3 ngôn ngữ)</button>
+                    </div>
+                    <div id="manualFullPreview" style="margin-top:10px;"></div>
+                </div>
+            </div>
+
+            <!-- ===== AI ===== -->
+            <div class="tab" id="ai">
+                <h2>🤖 AI sinh thẻ thông minh</h2>
+                <div class="ai-box">
+                    <input type="text" id="aiWord" placeholder="Nhập từ cần sinh thẻ..." style="width:100%;padding:12px;border:2px solid #ddd;border-radius:10px;font-size:14px;">
+                    <button class="btn btn-primary" onclick="generateAICard()" style="margin-top:10px;">✨ Sinh thẻ (AI tạo đầy đủ 3 ngôn ngữ — chờ 30-90s)</button>
+                    <div style="font-size:11px;color:#64748b;margin-top:6px;">Kết quả sẽ có IPA, Pinyin, ví dụ tiếng Anh/Trung/Việt đầy đủ. Bạn xem trước & chỉnh trước khi lưu.</div>
+                    <div id="aiPreview" class="preview-card"></div>
+                </div>
+            </div>
+
+            <!-- ===== BATCH ===== -->
+            <div class="tab" id="batch">
+                <h2>📚 Tạo nhiều thẻ cùng lúc</h2>
+                <div class="ai-box">
+                    <textarea id="batchWords" rows="6" placeholder="Nhập danh sách từ, mỗi từ trên một dòng (VD: algorithm&#10;server&#10;database)" style="width:100%;padding:12px;border:2px solid #ddd;border-radius:10px;font-size:14px;"></textarea>
+                    <button class="btn btn-primary" onclick="generateBatchCards()" style="margin-top:10px;">🚀 Tạo tất cả thẻ (AI full 3 ngôn ngữ)</button>
+                    <div style="font-size:11px;color:#64748b;margin-top:6px;">Mỗi thẻ sẽ có đầy đủ EN+IPA, ZH+Pinyin, nghĩa VI + ví dụ 3 ngôn ngữ. Xem kết quả chi tiết bên dưới sau khi xong.</div>
+                    <div id="batchProgress" style="margin-top:20px;"></div>
+                    <div id="batchResult" class="preview-card"></div>
+                </div>
+            </div>
+
+            <!-- ===== CHAT ===== -->
+            <div class="tab" id="chat">
+                <h2>💬 Trợ lý AI</h2>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai">👋 Xin chào! Tôi là trợ lý học từ vựng. Hãy hỏi tôi bất cứ điều gì!</div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chatInput" placeholder="Hỏi về từ vựng, ngữ pháp...">
+                        <button class="btn btn-primary" onclick="sendChat()">Gửi</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== EXERCISES ===== -->
+            <div class="tab" id="exercises">
+                <h2>✍️ Bài tập điền từ</h2>
+                <p>Củng cố từ vựng với các bài tập tự động sinh.</p>
+                <button class="btn btn-primary" onclick="loadExercises()">🔄 Tải câu hỏi mới</button>
+                <div id="exercisesContainer" style="margin-top:20px;"></div>
+            </div>
+
+            <!-- ===== GAME  (4 game modes) ===== -->
+            <div class="tab" id="game">
+                <h2>🎮 Học từ vựng — 4 trò chơi thú vị</h2>
+                <p>Rắn di chuyển ăn từ → Điền từ → Chim bay → Rắn cổ điển. Điểm được lưu vào bảng vàng sau khi hoàn thành!</p>
+
+                <!-- Game nav -->
+                <div class="phase-nav" id="gamePhaseNav">
+                    <button class="phase-btn" id="ptab-balloon" onclick="setGamePhase('balloon')">
+                        <span class="phase-icon">🎈</span>
+                        <span class="phase-name">Bóng bay</span>
+                        <span class="phase-desc">Học từ qua 4 giai đoạn</span>
+                    </button>
+                    <button class="phase-btn active" id="ptab-g1" onclick="setGamePhase('g1')">
+                        <span class="phase-icon">🪱</span>
+                        <span class="phase-name">Rắn EN→VI</span>
+                        <span class="phase-desc">Di chuyển ăn từ đúng</span>
+                    </button>
+                    <button class="phase-btn" id="ptab-g2" onclick="setGamePhase('g2')">
+                        <span class="phase-icon">🐟</span>
+                        <span class="phase-name">Cá điền từ</span>
+                        <span class="phase-desc">Điền từ, có dịch + loa</span>
+                    </button>
+                    <button class="phase-btn" id="ptab-g3" onclick="setGamePhase('g3')">
+                        <span class="phase-icon">🐦</span>
+                        <span class="phase-name">Chim bay từ</span>
+                        <span class="phase-desc">Chọn đúng từ, dịch nghĩa</span>
+                    </button>
+                    <button class="phase-btn" id="ptab-g4" onclick="setGamePhase('g4')">
+                        <span class="phase-icon">🐍</span>
+                        <span class="phase-name">Rắn ăn chữ</span>
+                        <span class="phase-desc">Ăn từ đúng theo thứ tự</span>
+                    </button>
+                </div>
+
+                <!-- ===== GAME 1: Rắn 1 EN→VI ===== -->
+                <div id="phase-g1" class="phase-content">
+                    <div class="game-panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+                            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                                <span class="game-badge" style="background:#ede9fe;color:#7c3aed;">🪱 Rắn tìm nghĩa VN</span>
+                                <span id="s1Level" style="font-size:1rem;font-weight:700;color:#6b7280;">Mức 1</span>
+                            </div>
+                            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                                <span style="font-size:1rem;font-weight:700;color:#f59e0b;">⭐ Điểm: <span id="s1Score">0</span></span>
+                                <span style="font-size:1rem;font-weight:700;color:#ef4444;">❤ Máu: <span id="s1Lives">3</span></span>
+                            </div>
+                        </div>
+                        <div id="s1Q" style="background:#f0f9ff;border:2px solid #bae6fd;border-radius:12px;padding:12px 16px;margin-bottom:10px;font-size:1rem;font-weight:600;color:#1e40af;text-align:center;">Nhấn ▶️ Bắt đầu</div>
+                        <div id="s1Words" style="margin-bottom:8px;text-align:center;"></div>
+                        <canvas id="s1Canvas" width="600" height="400" style="background:linear-gradient(135deg,#eff6ff,#eef2ff);border-radius:18px;border:2px solid #c7d2fe;outline:none;box-shadow:0 8px 24px rgba(0,0,0,.07);width:100%;display:block;margin:0 auto 10px;"></canvas>
+                        <div id="s1Feed" style="min-height:50px;padding:10px;background:#f8fafc;border-radius:12px;border:2px dashed #c7d2fe;margin-bottom:10px;"></div>
+                        <div id="s1Msg" style="min-height:36px;font-weight:700;text-align:center;color:#1e40af;"></div>
+                        <div style="text-align:center;margin-top:8px;">
+                            <button class="btn btn-primary" onclick="startSnake1Game()" style="font-size:1.05rem;padding:10px 28px;">▶️ Bắt đầu Rắn</button>
+                            <button class="btn" onclick="_s1_skipQ()" style="background:#fef3c7;color:#92400e;margin-left:8px;font-size:.95rem;padding:10px 20px;">⏭ Bỏ câu này</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== BALLOON WORD GAME ===== -->
+                <div id="phase-balloon" class="phase-content" style="display:none;">
+                    <div class="game-panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+                            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                                <span class="game-badge" style="background:#ede9fe;color:#7c3aed;">🎈 Bong bóng từ vựng</span>
+                                <span id="balloonPhaseBadge" style="font-size:1rem;font-weight:700;color:#6b7280;"></span>
+                            </div>
+                            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                                <span style="font-size:1rem;font-weight:700;color:#f59e0b;">⭐ Điểm: <span id="balloonScoreVal">0</span></span>
+                                <span style="font-size:1rem;font-weight:700;color:#6b7280;">📊 Giai đoạn: <span id="balloonLevelVal">0/4</span></span>
+                            </div>
+                        </div>
+                        <!-- Vocab image + reveal stages -->
+                        <div id="balloonRevealBox" style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:14px;text-align:center;">
+                            <img id="balloonImg" src="" alt="" style="display:none;max-width:280px;max-height:200px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.12);object-fit:contain;" onerror="this.style.display='none'">
+                            <div id="balloonImgSkel" style="display:none;width:280px;height:200px;border-radius:16px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);"></div>
+                            <div id="balloonWordEN" style="font-size:1.6rem;font-weight:800;color:#1e293b;min-height:2rem;"></div>
+                            <div id="balloonWordZH" style="font-size:1.15rem;font-weight:700;color:#4f46e5;min-height:1.6rem;"></div>
+                            <div id="balloonWordVI" style="font-size:1.1rem;font-weight:600;color:#059669;min-height:1.5rem;"></div>
+                        </div>
+                        <!-- Task hint -->
+                        <div id="balloonTaskHint" style="background:#f0f9ff;border:2px solid #bae6fd;border-radius:12px;padding:12px 16px;margin-bottom:12px;text-align:center;font-size:1rem;color:#1e40af;min-height:48px;"></div>
+                        <!-- Floating balloon canvas -->
+                        <div id="balloonCanvas" style="position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(135deg,#eff6ff,#f0fdf4);border:2px solid #c7d2fe;box-shadow:0 8px 24px rgba(0,0,0,.07);width:100%;min-height:380px;margin-bottom:12px;"></div>
+                        <!-- Audio + Start/Next buttons -->
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;">
+                            <button id="btnAudioBalloon" onclick="playWordAudio()" class="btn" style="background:#ede9fe;color:#7c3aed;font-size:.95rem;padding:10px 20px;">🔊 Nghe từ</button>
+                            <button id="btnBalloonStart" class="btn btn-primary" onclick="startBalloonGame()" style="font-size:1.05rem;padding:10px 28px;">▶️ Bắt đầu Bóng bay</button>
+                            <button id="btnBalloonNext" class="btn" onclick="submitBalloonScoreThenGo()" style="background:#d1fae5;color:#065f46;display:none;font-size:.95rem;padding:10px 20px;">→ Sang Điền từ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== SENTENCE BUILD GAME ===== -->
+                <div id="phase-sentence" class="phase-content" style="display:none;">
+                    <div class="game-panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+                            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                                <span class="game-badge" style="background:#ede9fe;color:#7c3aed;">🧩 Ghép câu</span>
+                                <span style="font-size:1rem;font-weight:700;color:#6b7280;">Câu <span id="bsIdx">1</span>/5</span>
+                            </div>
+                            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                                <span style="font-size:1rem;font-weight:700;color:#f59e0b;">⭐ Điểm: <span id="bsScoreVal">0</span></span>
+                                <span style="font-size:1rem;font-weight:700;color:#10b981;">✅ <span id="bsCorrectVal">0</span></span>
+                                <span style="font-size:1rem;font-weight:700;color:#ef4444;">❌ <span id="bsWrongVal">0</span></span>
+                            </div>
+                        </div>
+                        <!-- Nghĩa tiếng Việt -->
+                        <div id="bsTargetVI" style="font-size:1.15rem;font-weight:800;color:#7c3aed;margin-bottom:10px;text-align:center;"></div>
+                        <!-- Progress bar -->
+                        <div id="bsProgBar" style="display:flex;flex-wrap:wrap;gap:5px;padding:10px;background:#f0f9ff;border-radius:12px;border:2px solid #c7d2fe;margin-bottom:12px;"></div>
+                        <!-- Word token canvas -->
+                        <div id="bsCanvas" style="position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:2px solid #c7d2fe;box-shadow:0 8px 24px rgba(0,0,0,.07);width:100%;min-height:300px;margin-bottom:12px;"></div>
+                        <!-- Feedback + controls -->
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;">
+                            <div id="bsFeedbackEl" style="min-height:36px;font-weight:700;text-align:center;color:#7c3aed;"></div>
+                        </div>
+                        <div id="bsTargetBox"></div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:10px;">
+                            <button class="btn btn-primary" onclick="startSentenceBuildGame()" style="font-size:1.05rem;padding:10px 28px;">🧩 Bắt đầu Ghép câu</button>
+                            <button class="btn" onclick="resetBSCurrent()" style="background:#fef3c7;color:#92400e;padding:8px 18px;">↺ Làm lại câu này</button>
+                            <button class="btn" onclick="skipBSCurrent()" style="background:#fee2e2;color:#dc2626;padding:8px 18px;">⏭ Bỏ qua</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== GAME 2: Cá điền từ ===== -->
+                <div id="phase-g2" class="phase-content" style="display:none;">
+                    <div class="game-panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+                            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                                <span class="game-badge" style="background:#d1fae5;color:#065f46;">🐟 Cá điền từ</span>
+                                <span style="font-size:1rem;font-weight:700;color:#1e293b;">Câu <span id="fishLevel">1</span>/5</span>
+                            </div>
+                            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                                <span style="font-size:1rem;font-weight:700;color:#10b981;">⭐ Điểm: <span id="fishScore">0</span></span>
+                                <span style="font-size:1rem;font-weight:700;color:#ef4444;">🫧 Máu: <span id="fishLives">3</span></span>
+                            </div>
+                        </div>
+                        <!-- Câu tiếng Việt -->
+                        <div id="fishTarget" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #6ee7b7;border-radius:16px;padding:14px 18px;margin-bottom:12px;text-align:center;">
+                            <div id="fishSenVI" style="font-size:1.2rem;font-weight:800;color:#1e293b;line-height:1.4;">Nhấn Bắt đầu để chơi...</div>
+                            <div id="fishSenEN" style="font-size:.88rem;color:#6b7280;margin-top:5px;font-style:italic;"></div>
+                            <button onclick="speakText('vi',fishCurrentVI||'')" style="margin-top:8px;padding:6px 14px;border-radius:99px;background:#6ee7b7;color:#065f46;border:none;font-weight:700;cursor:pointer;font-size:.88rem;">🔊 Đọc câu tiếng Việt</button>
+                            <button id="fishPlayEnBtn" onclick="speakText('en',fishCurrentEN||'')" style="margin-top:8px;padding:6px 14px;border-radius:99px;background:#bfdbfe;color:#1e40af;border:none;font-weight:700;cursor:pointer;font-size:.88rem;">🔊 Đọc câu tiếng Anh</button>
+                        </div>
+                        <!-- Fish sprite swimming -->
+                        <div style="position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(135deg,#e0f2fe,#f0fdf4);border:2px solid #bae6fd;padding:0 10px;margin-bottom:12px;min-height:60px;display:flex;align-items:center;">
+                            <div id="fishFish" style="font-size:2.2rem;position:relative;z-index:2;flex-shrink:0;animation:fishSwim 1.6s ease-in-out infinite alternate;">🐟</div>
+                            <div id="fishSlotBox" style="display:flex;gap:10px;flex-wrap:wrap;flex:1;justify-content:center;padding:10px;"></div>
+                        </div>
+                        <!-- Word bank -->
+                        <div id="fishWordBank" style="text-align:center;min-height:55px;padding:10px;background:#f0fdf4;border-radius:12px;border:2px dashed #bbf7d0;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;"></div>
+                        <div id="fishMsg" style="min-height:36px;font-weight:700;text-align:center;color:#166534;"></div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;">
+                            <button class="btn btn-primary" onclick="startGoldfishGame()" style="font-size:1.05rem;padding:10px 28px;">🐟 Bắt đầu Cá</button>
+                            <button class="btn" onclick="speakText('vi',fishCurrentVI||'')" style="background:#d1fae5;color:#065f46;font-size:.9rem;padding:8px 18px;">🔊 Đọc câu VN</button>
+                            <button id="fishPlayEnBtn2" onclick="speakText('en',fishCurrentEN||'')" style="background:#bfdbfe;color:#1e40af;font-size:.9rem;padding:8px 18px;">🔊 Đọc câu EN</button>
+                            <button class="btn" onclick="resetFishQ()" style="background:#fee2e2;color:#dc2626;font-size:.9rem;padding:8px 18px;">↺ Làm lại</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== GAME 3: Chim bay từ ===== -->
+                <div id="phase-g3" class="phase-content" style="display:none;">
+                    <div class="game-panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+                            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                                <span class="game-badge" style="background:#fef3c7;color:#92400e;">🐦 Chim bay từ</span>
+                                <span style="font-size:1rem;font-weight:700;color:#1e293b;">Từ <span id="birdWordIdx">0</span>/10</span>
+                            </div>
+                            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                                <span style="font-size:1rem;font-weight:700;color:#10b981;">⭐ Điểm: <span id="birdScore">0</span></span>
+                            </div>
+                        </div>
+                        <!-- Bird animation row -->
+                        <div style="background:linear-gradient(135deg,#fff7ed,#fffbeb);border:2px solid #fde68a;border-radius:16px;padding:16px 20px;margin-bottom:12px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;min-height:72px;">
+                            <div id="birdSprite" style="font-size:2.5rem;animation:birdFly 1.4s ease-in-out infinite alternate;flex-shrink:0;" title="Chim">🐦</div>
+                            <div style="flex:1;min-width:200px;">
+                                <div style="font-size:.78rem;color:#92400e;font-weight:700;text-transform:uppercase;margin-bottom:4px;">🇻🇳 Nghĩa tiếng Việt</div>
+                                <div id="birdVI" style="font-size:1.2rem;font-weight:800;color:#1e293b;">Nhấn Bắt đầu để chơi...</div>
+                                <div id="birdEX" style="font-size:.85rem;color:#6b7280;font-style:italic;margin-top:4px;"></div>
+                            </div>
+                            <button id="birdPlayBtn" onclick="speakBirdCard()" style="padding:8px 16px;border-radius:99px;background:#fef3c7;border:2px solid #fde68a;color:#92400e;font-weight:700;cursor:pointer;">🔊 Đọc cả câu</button>
+                        </div>
+                        <!-- Word selection -->
+                        <div id="birdWords" style="min-height:60px;padding:10px;background:#fff7ed;border-radius:14px;border:2px dashed #fde68a;margin-bottom:10px;text-align:center;font-size:.95rem;color:#94a3b8;">Nhấn Bắt đầu để tìm từ!</div>
+                        <div id="birdFeedback" style="min-height:36px;font-weight:700;text-align:center;"></div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;">
+                            <button class="btn btn-primary" onclick="startBirdGame()" style="font-size:1.05rem;padding:10px 28px;">🐦 Bắt đầu Chim</button>
+                            <button class="btn" onclick="speakBirdCard()" style="background:#fef3c7;color:#92400e;font-size:.9rem;padding:8px 18px;">🔊 Nghe nghĩa + từ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== GAME 4: Rắn 2 ăn chữ ===== -->
+                <div id="phase-g4" class="phase-content" style="display:none;">
+                    <div class="game-panel">
+                        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+                            <div style="flex:2;min-width:300px;">
+                                <div id="s2Header" style="background:#f1f5f9;padding:16px;border-radius:14px;margin-bottom:10px;">
+                                    <div style="display:flex;justify-content:space-between;font-weight:700;">
+                                        <span>🏆 Level: <span id="s2Level" style="color:#f59e0b">1</span></span>
+                                        <span>⭐ Điểm: <span id="s2Score">0</span></span>
+                                        <span>❤ Máu: <span id="s2Lives">3</span></span>
+                                    </div>
+                                    <div id="s2QTarget" style="font-size:1.15rem;color:#4f46e5;margin-top:10px;font-weight:700;">🇻🇳 Nghĩa câu...</div>
+                                    <div id="s2Current" style="font-size:.95rem;color:#1e293b;margin-top:5px;min-height:22px;">Từ cần ăn: —</div>
+                                    <div id="s2Feedback" style="font-size:.9rem;font-weight:700;margin-top:6px;min-height:22px;"></div>
+                                </div>
+                                <canvas id="s2Canvas" width="600" height="400" style="background:#1e293b;border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.18);width:100%;display:block;margin:0 auto;outline:none;" tabindex="0"></canvas>
+                                <div style="margin-top:12px;">
+                                    <div style="font-size:.82rem;color:#6b7280;margin-bottom:6px;font-weight:600;">Tiến độ ăn từ:</div>
+                                    <div id="s2Words" style="min-height:38px;display:flex;flex-wrap:wrap;gap:5px;padding:8px;background:#f8fafc;border-radius:10px;border:2px dashed #e2e8f0;"></div>
+                                </div>
+                                <div style="text-align:center;margin-top:12px;">
+                                    <button class="btn btn-primary" onclick="startSnake2Game()" style="font-size:1.05rem;padding:10px 28px;">🚀 Bắt đầu Rắn ăn chữ</button>
+                                </div>
+                            </div>
+                            <div style="flex:1;min-width:220px;">
+                                <div class="ai-box">
+                                    <h4 style="margin:0 0 8px 0;color:#f59e0b">👑 Bảng Vàng</h4>
+                                    <ul id="s2Leaderboard" style="list-style:none;padding:0;"></ul>
+                                </div>
+                                <div class="ai-box" style="margin-top:12px;background:#f8fafc;">
+                                    <h4 style="margin:0 0 6px 0;">🎮 Hướng dẫn</h4>
+                                    <p style="font-size:.85rem;color:#475569;line-height:1.6;">
+                                        Dùng phím mũi tên ⬅️⬆️⬇️➡️.<br>
+                                        Ăn <span style="color:#6ee7b7;font-weight:700">bóng xanh</span> = từ đúng nghĩa VN.<br>
+                                        Ăn <span style="color:#f59e0b;font-weight:700">bóng cam</span> = từ sai ❌ GAME OVER.<br>
+                                        Ăn đúng hết câu → câu tiếp theo.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shared leaderboard -->
+                <div style="margin-top:22px;">
+                    <div class="ai-box">
+                        <h3 style="margin:0;color:#f59e0b">👑 Bảng Vàng <span id="lbSubtitle" style="font-size:.85rem;font-weight:400;color:#64748b">(Rắn EN→VI)</span></h3>
+                        <ul id="gameLeaderboard" style="list-style:none;padding:0;margin-top:15px;">
+                            <li style="color:#64748b;font-size:.9rem">Đang tải...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ===== SCENARIOS ===== -->
+            <div class="tab" id="scenarios">
+                <h2>🎭 Role-play Conversation</h2>
+                <p>Luyện nói tiếng Anh qua các tình huống IT thực tế.</p>
+                <div id="scenariosContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px;"></div>
+            </div>
+
+            <!-- ===== MANAGE ===== -->
+            <div class="tab" id="manage">
+                <div class="tab-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <h2>🗂️ Quản lý kho thẻ</h2>
+                    <button class="btn btn-danger" onclick="deleteAllCards()" style="background:#fee2e2;color:#dc2626;">⚠️ Xoá toàn bộ kho</button>
+                </div>
+                <div class="ai-box" style="margin-bottom:20px;">
+                    <input type="text" id="manageSearch" placeholder="Tìm kiếm..." style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;" oninput="renderManageCards()">
+                </div>
+                <div id="manageCardsContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px;"></div>
+            </div>
+
+            <!-- ===== SETTINGS ===== -->
+            <div class="tab" id="settings">
+                <h2>⚙️ Cấu hình học tập</h2>
+                <div class="form-container">
+                    <div class="form-group"><label>Mục tiêu số từ mỗi ngày</label><input type="number" id="settingDailyGoal" value="5" min="1" max="50"></div>
+                    <div class="form-group"><label>Chuyên môn</label>
+                        <select id="settingProfession" style="width:100%;padding:10px;border:2px solid #ddd;border-radius:10px;">
+                            <option value="Tổng quát">Tổng quát</option>
+                            <option value="Công nghệ thông tin (IT)">Công nghệ thông tin (IT)</option>
+                            <option value="Công xưởng / Sản xuất">Công xưởng / Sản xuất</option>
+                            <option value="Văn phòng / Hành chính">Văn phòng / Hành chính</option>
+                            <option value="Kinh doanh">Kinh doanh</option>
+                            <option value="Y tế">Y tế</option>
+                            <option value="Kỹ thuật">Kỹ thuật</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Ngôn ngữ học</label>
+                        <select id="settingLang" style="width:100%;padding:10px;border:2px solid #ddd;border-radius:10px;">
+                            <option value="en">Tiếng Anh</option>
+                            <option value="zh">Tiếng Trung</option>
+                            <option value="trilingual">3 Ngôn ngữ (EN+ZH+VI)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveUserSettings()" style="width:100%;margin-top:20px;">Lưu cấu hình</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toasts & modals -->
+    <div id="toast" class="toast"></div>
+    <div id="rolePlayModal" class="login-overlay" style="display:none;">
+        <div class="login-card" style="max-width:600px;max-height:80vh;display:flex;flex-direction:column;">
+            <h3 style="margin-top:0">🎭 Role-play</h3>
+            <div id="rolePlayDialog" style="flex:1;overflow-y:auto;margin-bottom:15px;padding:10px;background:#f8fafc;border-radius:8px;"></div>
+            <div id="rolePlayInput" style="display:none;gap:10px;margin-top:10px;">
+                <input type="text" id="rolePlayUserText" placeholder="Câu trả lời..." style="flex:1;padding:10px;border-radius:8px;border:1px solid #ddd;">
+                <button class="btn btn-primary" onclick="document.getElementById('rolePlayDialog').innerHTML+='<div style=&quot;margin:10px 0;color:#1e293b&quot;><strong>Bạn:</strong> '+document.getElementById(&quot;rolePlayUserText&quot;).value+&quot;</div>&quot;;document.getElementById(&quot;rolePlayUserText&quot;).value=&quot;&quot;;nextScenarioLine();">Gửi</button>
+            </div>
+            <button class="btn" onclick="endRolePlay()" style="margin-top:15px">Kết thúc</button>
+        </div>
+    </div>
+    <div id="giftOverlay" class="login-overlay" style="display:none;">
+        <div class="login-card" style="text-align:center;background:linear-gradient(135deg,#fff 0%,#f0f9ff 100%)">
+            <h2 style="color:#667eea;font-size:2rem">🎁 QUÀ TẶNG!</h2>
+            <div id="giftIcon" style="font-size:8rem;margin:20px 0;animation:bounce 1s infinite"></div>
+            <div id="giftName" style="font-size:1.5rem;font-weight:bold;color:#333;margin-bottom:20px"></div>
+            <button class="btn btn-primary" onclick="closeGift()">Tuyệt vời! 😍</button>
+        </div>
+    </div>
+    <div id="loginOverlay" class="login-overlay active">
+        <div class="login-card">
+            <h2 id="authTitle">Đăng nhập</h2>
+            <div class="form-group"><input type="text" id="authUsername" placeholder="Tên đăng nhập"></div>
+            <div class="form-group"><input type="password" id="authPassword" placeholder="Mật khẩu"></div>
+            <button class="btn btn-primary" onclick="handleAuth()" style="width:100%">Tiếp tục</button>
+            <p id="authSwitchText" style="text-align:center;margin-top:15px;cursor:pointer;color:#667eea" onclick="toggleAuthMode()">Chưa có tài khoản? Đăng ký</p>
+        </div>
+    </div>
+    <script src="/app.js"></script>
+    <script src="/snake_game.js"></script>
+</body>
+</html>

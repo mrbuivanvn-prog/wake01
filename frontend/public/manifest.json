@@ -1,0 +1,9 @@
+{
+    "name": "Wake and Learn",
+    "short_name": "WakeLearn",
+    "description": "AI-powered spaced repetition learning system",
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#4F46E5",
+    "background_color": "#ffffff"
+}

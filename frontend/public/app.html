@@ -75,13 +75,14 @@
             <div class="tab" id="create">
                 <h2>➕ Tạo thẻ mới (WebUI thông minh)</h2>
                 <div class="form-container">
-                    <div class="form-group"><label>Từ vựng tiếng Anh (bắt buộc)</label><input type="text" id="newQuestion" placeholder="e.g. algorithm"></div>
-                    <div class="form-group"><label>Từ vựng tiếng Trung ZH (tùy chọn)</label><input type="text" id="newWordZH" placeholder="e.g. 算法" autocomplete="off"></div>
-                    <div class="form-group"><label>Pinyin (tùy chọn)</label><input type="text" id="newPinyin" placeholder="e.g. suàn fǎ" autocomplete="off"></div>
-                    <div class="form-group"><label>Nghĩa tiếng Việt (bắt buộc)</label><input type="text" id="newAnswer" placeholder="Nghĩa tiếng Việt..."></div>
-                    <div class="form-group"><label>Ví dụ EN (tùy chọn)</label><input type="text" id="newExEN" placeholder="The algorithm processes data fast." autocomplete="off"></div>
-                    <div class="form-group"><label>Ví dụ ZH (tùy chọn)</label><input type="text" id="newExZH" placeholder="软件中有一个错误导致它意外崩溃" autocomplete="off"></div>
-                    <div class="form-group"><label>Ví dụ VI (tùy chọn)</label><input type="text" id="newExVI" placeholder="Phần mềm có một lỗi, dẫn đến việc nó sập bẫy bất ngờ." autocomplete="off"></div>
+                    <div class="form-group"><label>🇬🇧 Từ vựng tiếng Anh (bắt buộc)</label><input type="text" id="newQuestion" placeholder="e.g. algorithm"></div>
+                    <div class="form-group"><label>🇨🇳 Từ vựng tiếng Trung (tùy chọn)</label><input type="text" id="newWordZH" placeholder="e.g. 算法" autocomplete="off"></div>
+                    <div class="form-group"><label>📖 Pinyin (tùy chọn)</label><input type="text" id="newPinyin" placeholder="e.g. suàn fǎ" autocomplete="off"></div>
+                    <div class="form-group"><label>🇬🇧 Pronunciation/IPA (tùy chọn)</label><input type="text" id="newPronunciation" placeholder="e.g. /ˈælɡərɪðm/" autocomplete="off"></div>
+                    <div class="form-group"><label>🇻🇳 Nghĩa tiếng Việt (bắt buộc)</label><input type="text" id="newAnswer" placeholder="Nghĩa tiếng Việt..."></div>
+                    <div class="form-group"><label>🇬🇧 Ví dụ EN (tùy chọn)</label><input type="text" id="newExEN" placeholder="The algorithm processes data fast." autocomplete="off"></div>
+                    <div class="form-group"><label>🇨🇳 Ví dụ ZH (tùy chọn)</label><input type="text" id="newExZH" placeholder="软件中有一个错误导致它意外崩溃" autocomplete="off"></div>
+                    <div class="form-group"><label>🇻🇳 Ví dụ VI (tùy chọn)</label><input type="text" id="newExVI" placeholder="Phần mềm có một lỗi, dẫn đến việc nó sập bẫy bất ngờ." autocomplete="off"></div>
                     <div style="display:flex; gap:8px; margin:8px 0; flex-wrap:wrap;">
                         <button class="btn btn-primary" onclick="createManualCard()">💾 Lưu thẻ đầy đủ</button>
                         <button class="btn" onclick="aiFillForManual()" style="background:#f0f9ff;color:#0369a1;border:1px solid #bae6fd;">✨ AI điền đầy đủ (IPA+ZH+Pinyin+VD 3 ngôn ngữ)</button>

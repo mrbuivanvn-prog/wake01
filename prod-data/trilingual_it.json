@@ -64,12 +64,12 @@
   },
   "docker": {
     "en": "Docker",
-    "zh": "Docker容器",
-    "pinyin": "Docker qì tōng",
-    "vi": "Docker",
-    "example_en": "Docker containers package applications with all dependencies included.",
-    "example_zh": "Docker容器包含所有依赖项打包应用程序。",
-    "example_vi": "Container Docker đóng gói ứng dụng kèm mọi phụ thuộc."
+    "zh": "Docker",
+    "pinyin": "",
+    "vi": "nền tảng container hoá",
+    "example_en": "Docker containers package applications with all dependencies for consistent deployment.",
+    "example_zh": "Docker容器打包应用程序及所有依赖项，以实现一致的部署。",
+    "example_vi": "Container Docker đóng gói ứng dụng kèm mọi phụ thuộc để triển khai nhất quán."
   },
   "encryption": {
     "en": "encryption",
@@ -118,12 +118,12 @@
   },
   "kubernetes": {
     "en": "Kubernetes",
-    "zh": "Kubernetes容器编排",
-    "pinyin": "Kubernetes",
-    "vi": "Kubernetes",
-    "example_en": "Kubernetes orchestrates containers across multiple cloud providers.",
-    "example_zh": "Kubernetes跨多个云提供商编排容器。",
-    "example_vi": "Kubernetes điều phối container trên nhiều nhà cung cấp đám mây."
+    "zh": "Kubernetes",
+    "pinyin": "",
+    "vi": "nền tảng điều phối container",
+    "example_en": "Kubernetes orchestrates containers across multiple cloud providers seamlessly.",
+    "example_zh": "Kubernetes跨多个云提供商无缝编排容器。",
+    "example_vi": "Kubernetes điều phối container trên nhiều nhà cung cấp đám mây một cách liền mạch."
   },
   "middleware": {
     "en": "middleware",
@@ -586,12 +586,12 @@
   },
   "python": {
     "en": "Python",
-    "zh": "Python编程语言",
+    "zh": "Python",
     "pinyin": "Python",
-    "vi": "ngôn ngữ Python",
-    "example_en": "Python is widely used for backend development and data science.",
-    "example_zh": "Python广泛用于后端开发和数据科学。",
-    "example_vi": "Python được dùng rộng rãi cho phát triển backend và khoa học dữ liệu."
+    "vi": "ngôn ngữ lập trình Python",
+    "example_en": "Python is widely used for backend development with frameworks like Django and Flask.",
+    "example_zh": "Python广泛用于后端开发，例如使用Django和Flask框架。",
+    "example_vi": "Python được dùng rộng rãi trong phát triển backend với các framework như Django và Flask."
   },
   "java": {
     "en": "Java",
@@ -622,12 +622,12 @@
   },
   "react": {
     "en": "React",
-    "zh": "React前端框架",
-    "pinyin": "React",
+    "zh": "React",
+    "pinyin": "",
     "vi": "thư viện React",
     "example_en": "React library helps build component-based user interfaces.",
-    "example_zh": "React库有助于构建基于组件的用户界面。",
-    "example_vi": "Thư viện React giúp xây dựng giao diện người dùng theo component."
+    "example_zh": "React 是一个用于构建用户界面的 JavaScript 库。",
+    "example_vi": "React là thư viện giúp xây dựng giao diện người dùng theo cách component."
   },
   "vue": {
     "en": "Vue",
